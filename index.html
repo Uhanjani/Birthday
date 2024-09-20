@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Birthday Quiz Game</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .quiz-container, .message-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .question-container {
+            margin-bottom: 20px;
+        }
+
+        .answer-buttons {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .answer-buttons button {
+            background-color: #b1c068;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .answer-buttons button:hover {
+            background-color: #804b77; /* Pencil color on hover */
+        }
+
+        .answer-buttons button.selected {
+            background-color: orange; /* Orange for selected/submitted */
+            color: #fff;
+        }
+
+        .answer-buttons button.correct {
+            background-color: #b1c068; /* Green for correct */
+        }
+
+        .answer-buttons button.incorrect {
+            background-color: #f44336; /* Red for incorrect */
+        }
+
+        .hint-button, .submit-button, .restart-button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .hint-button:hover, .submit-button:hover, .restart-button:hover {
+            background-color: #e4c414;
+        }
+
+        .hint {
+            font-style: italic;
+            color: #292568;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .message-container {
+            display: none;
+            overflow: hidden;
+        }
+
+        .message-container.show {
+            display: block;
+        }
+
+        .congratulations {
+            font-size: 2.5em;
+            color: #ff69b4;
+            margin: 20px 0;
+            animation: scaleUp 1s ease-in-out forwards;
+        }
+
+        .final-message {
+            font-size: 1.5em;
+            color: #ff4500;
+            margin: 20px 0;
+            animation: fadeIn 2.5s ease-in-out forwards;
+        }
+
+        .balloons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .balloon {
+            width: 50px;
+            height: 70px;
+            background-color: red;
+            border-radius: 50%;
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .balloon1 {
+            background-color: #ff6347;
+            animation-delay: 0s;
+        }
+
+        .balloon2 {
+            background-color: #ffa500;
+            animation-delay: 1s;
+        }
+
+        .balloon3 {
+            background-color: #ff69b4;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        .cake {
+            margin: 20px 0;
+            animation: popIn 1s ease-in-out forwards;
+        }
+
+        .cake img {
+            width: 100px;
+            height: auto;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes scaleUp {
+            0% { transform: scale(0); }
+            100% { transform: scale(0.5); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        canvas#confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question-container" class="question-container">
+            <h1>Birthday Quiz Game</h1>
+            <p id="question">Question will appear here</p>
+            <div id="answer-buttons" class="answer-buttons"></div>
+            <button id="hint-button" class="hint-button">Show Hint</button>
+            <p id="hint" class="hint"></p>
+            <button id="submit-button" class="submit-button hide">Submit Answer</button>
+        </div>
+        <div id="message-container" class="message-container">
+            <div class="balloons">
+                <div class="balloon balloon1"></div>
+                <div class="balloon balloon2"></div>
+                <div class="balloon balloon3"></div>
+            </div>
+            <div class="cake">
+                <img src="cake.jpg" alt="Birthday Cake">
+            </div>
+            <h2 class="congratulations">Congratulations!</h2>
+            <p id="final-message" class="final-message"></p>
+            <p id="score-details" class="final-message"></p>
+            <button id="restart-button" class="restart-button">Restart Quiz</button>
+        </div>
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Neeku entha bestielu unnarenti(nuv anukunnadhe amma)?",
+                answers: [
+                    { text: "iddaru", correct: false },
+                    { text: "padhi", correct: false },
+                    { text: "papam punyam devudike theliyali", correct: true }
+                ],
+                hint: "extralu cheyakunda first answer pettu hint kavalanta, ahaa emma infinity ledhani feel avuthunnava."
+            },
+            {
+                question: "neeku classs lo evaru istam ra baga cheppu?",
+                answers: [
+                    { text: "indhu", correct: false },
+                    { text: "aish", correct: false },
+                    { text: "navya", correct: false },
+                    { text: "muggurunu", correct: true }
+                ],
+                hint: "memu emi cheptham ra, neeku istam ra baga cheppu.endukuugani muggurunu pettakunda"
+            },
+            {
+                question: "oka pakka yaswanth inkopakka nenu unnam, evaro okari side ravali ante em chesthav?",
+                answers: [
+                    { text: "Yaswanth", correct: false },
+                    { text: "nenu", correct: false },
+                    { text: "vallatho naku etu vanti sambhandham ledhu maa bestie chalu naku", correct: true },
+                    { text: "none of the above", correct: false }
+                ],
+                hint: "nenu ani cheppadam manesi hint aduthava dhurmarduguda nyc value"
+            },
+            {
+                question: "emanukuntav assal mana eternal trio gurinchi?",
+                answers: [
+                    { text: "naku istame aa grp ante", correct: true },
+                    { text: "uhaki panipata leka chesindhi", correct: false },
+                    { text: "edho bagodhani untunna", correct: false }
+                ],
+                hint: "chala istham ra aa grp, mana eternal trio gurinchi cheppu"
+            },
+            {
+                question: "neeeku ee quiz ela undi?",
+                answers: [
+                    { text: "chala bagundi", correct: true },
+                    { text: "chala chetthalaga undhi", correct: false },
+                    { text: "chala saradaga undhi", correct: false },
+                    { text: "chala bore kottindhi", correct: false }
+                ],
+                hint: "nene design chesanga, chala bagundi anukunta"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let selectedAnswer = null;
+
+        const questionContainer = document.getElementById('question-container');
+        const questionElement = document.getElementById('question');
+        const answerButtonsElement = document.getElementById('answer-buttons');
+        const hintButton = document.getElementById('hint-button');
+        const hintElement = document.getElementById('hint');
+        const submitButton = document.getElementById('submit-button');
+        const messageContainer = document.getElementById('message-container');
+        const restartButton = document.getElementById('restart-button');
+        const finalMessageElement = document.getElementById('final-message');
+        const scoreDetailsElement = document.getElementById('score-details');
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+
+        function startQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            selectedAnswer = null;
+
+            // Hide message container and show question container
+            messageContainer.classList.remove('show');
+            questionContainer.classList.remove('hide');
+
+            // Hide confetti canvas
+            confettiCanvas.style.display = 'none';
+
+            // Show the first question
+            showQuestion(questions[currentQuestionIndex]);
+        }
+
+        function showQuestion(question) {
+            questionElement.innerText = question.question;
+            answerButtonsElement.innerHTML = '';
+            question.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerText = answer.text;
+                button.classList.add('btn');
+                button.addEventListener('click', () => selectAnswer(button, answer));
+                answerButtonsElement.appendChild(button);
+            });
+            hintElement.innerText = ''; // Clear hint
+            submitButton.classList.remove('hide');
+        }
+
+        function selectAnswer(button, answer) {
+            document.querySelectorAll('.answer-buttons button').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            selectedAnswer = answer;
+        }
+
+        function submitAnswer() {
+            if (selectedAnswer) {
+                if (selectedAnswer.correct) {
+                    score++;
+                    correctAnswers++;
+                    document.querySelector('.selected').classList.add('correct');
+                } else {
+                    wrongAnswers++;
+                    document.querySelector('.selected').classList.add('incorrect');
+                }
+                document.querySelectorAll('.answer-buttons button').forEach(btn => btn.disabled = true);
+                submitButton.classList.add('hide');
+                if (currentQuestionIndex < questions.length - 1) {
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        showQuestion(questions[currentQuestionIndex]);
+                    }, 1000);
+                } else {
+                    setTimeout(showMessage, 1000);
+                }
+            } else {
+                alert('Please select an answer before submitting.');
+            }
+        }
+
+        function showMessage() {
+            questionContainer.classList.add('hide');
+            messageContainer.classList.add('show');
+
+            finalMessageElement.innerHTML = getFinalMessage();
+            scoreDetailsElement.innerText = `Score: ${score} | Correct Answers: ${correctAnswers} | Wrong Answers: ${wrongAnswers}`;
+
+            startConfetti(); // Start confetti animation
+        }
+
+        function getFinalMessage() {
+            if (score === questions.length) {
+                return "Congratulations. Nijalu Oppukunnav Parledhu.<br><a href='index1.html'>okasari idhi nokku</a>";
+            } else if (score >= questions.length / 2) {
+                return "ahaa emma, ela kanpaduthunnam, flute jinka mundhu uha mundhu kadhu";
+            } else {
+                return "ayyababoi ammo intha dharunam enti nuvv nijalu matladukundhama kasepu first answers cheptha cheptha malli kottu 1.papam punyam devudike theliyali, 2.muggurunu 3.vallatho naku etu vanti sambhandham ledhu maa bestie chalu naku 4.naku istame aa grp ante 5.chala bagundi";
+            }
+        }
+
+        function startConfetti() {
+            confettiCanvas.style.display = 'block'; // Show confetti canvas
+            const colors = ['#ff0', '#f0f', '#0ff'];
+            const particles = 0;
+
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+
+            function createConfetti() {
+                for (let i = 0; i < particles; i++) {
+                    const x = Math.random() * confettiCanvas.width;
+                    const y = Math.random() * confettiCanvas.height;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const size = Math.random() * 5 + 2;
+                    const speed = Math.random() * 3 + 1;
+
+                    (function animateConfetti(x, y, size, color) {
+                        let intervalId = setInterval(() => {
+                            ctx.clearRect(x - size, y - size, size * 2, size * 2);
+                            ctx.beginPath();
+                            ctx.arc(x, y, size, 0, 2 * Math.PI);
+                            ctx.fillStyle = color;
+                            ctx.fill();
+                            ctx.closePath();
+                            y += speed;
+                            if (y > confettiCanvas.height) {
+                                clearInterval(intervalId);
+                            }
+                        }, 50);
+                    })(x, y, size, color);
+                }
+            }
+
+            createConfetti();
+        }
+
+        hintButton.addEventListener('click', () => {
+            hintElement.innerText = questions[currentQuestionIndex].hint;
+        });
+
+        submitButton.addEventListener('click', submitAnswer);
+
+        restartButton.addEventListener('click', startQuiz);
+
+        startQuiz();
+    </script>
+</body>
+</html>

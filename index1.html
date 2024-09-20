@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffebee, #9ca2ec);
+            color: #333;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+            padding: 40px;
+            background: #fff;
+            margin: 5% auto;
+            width: 90%;
+            max-width: 900px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 3em;
+            color: #0f0341;
+            margin-bottom: 20px;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 20px 0;
+            color: #555;
+        }
+        .footer {
+            font-size: 1.2em;
+            color: #ff5722;
+            margin-top: 20px;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #daccd0, 0 0 20px #ff4081, 0 0 30px #ad798a;
+            }
+            to {
+                text-shadow: 0 0 20px #bdc2c6, 0 0 30px #ff4081, 0 0 40px #ff4081;
+            }
+        }
+        .balloon {
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            background: #ff4081;
+            border-radius: 50% 50% 40% 40%;
+            bottom: -150px;
+            animation: float 10s ease-in-out infinite;
+        }
+        .balloon:nth-child(1) { left: 5%; background: #ff5722; animation-duration: 12s; }
+        .balloon:nth-child(2) { left: 30%; background: #ff9800; animation-duration: 15s; }
+        .balloon:nth-child(3) { left: 55%; background: #4caf50; animation-duration: 18s; }
+        .balloon:nth-child(4) { left: 80%; background: #2196f3; animation-duration: 20s; }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-700px); }
+        }
+        .star {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #ffeb3b;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 2s infinite ease-in-out;
+        }
+        .star:nth-child(5) { top: 10%; left: 20%; animation-duration: 2s; }
+        .star:nth-child(6) { top: 20%; left: 40%; animation-duration: 3s; }
+        .star:nth-child(7) { top: 30%; left: 60%; animation-duration: 1.5s; }
+        .star:nth-child(8) { top: 40%; left: 80%; animation-duration: 2.5s; }
+        @keyframes twinkle {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff5722;
+            border-radius: 50%;
+            animation: confetti 2s infinite ease-in-out;
+        }
+        .confetti:nth-child(9) { left: 10%; top: -10%; background: #ffeb3b; animation-duration: 2.5s; }
+        .confetti:nth-child(10) { left: 30%; top: -10%; background: #4caf50; animation-duration: 3s; }
+        .confetti:nth-child(11) { right: 20%; top: -10%; background: #2196f3; animation-duration: 2s; }
+        @keyframes confetti {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+        .decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .bottle { background: url('bottle.png') no-repeat center center; background-size: contain; }
+        .chocolate { background: url('chocolate.png') no-repeat center center; background-size: contain; }
+        .cake { background: url('cake.png') no-repeat center center; background-size: contain; }
+        .bottle { top: 10%; left: 5%; }
+        .chocolate { top: 20%; right: 5%; }
+        .cake { bottom: 10%; left: 50%; transform: translateX(-50%); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Happy Birthday, my friend!</h1>
+        <p>Today is all about celebrating you. I want to take a moment to appreciate how much you mean to me. Our friendship is incredibly special, and I cherish every moment we spend together.</p>
+        <p>I know I sometimes tease you about girls and other silly things. I just want you to know that it’s all in good fun and part of the way we joke around. It’s never meant to be taken seriously—I truly value and respect you as a friend.</p>
+        <p>Thank you for always being there and for putting up with my playful banter. You’re a fantastic friend, and I’m so grateful to have you in my life. Here’s to many more birthdays and countless more laughs together!</p>
+        <p style="font-size: 1.5em; color:#042f52">Ekkuva feel avvakule adhi joke adhi kani nijam kuda undhi.🤪🤪</p>
+        <p class="footer">Wishing you a fantastic day and an amazing year ahead!</p>
+
+    </div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="bottle decoration"></div>
+    <div class="chocolate decoration"></div>
+    <div class="cake decoration"></div>
+</body>
+</html>
